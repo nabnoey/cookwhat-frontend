@@ -26,6 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
+.env.*
+!.env.example
 .env*.local
 
 # vercel
@@ -34,3 +37,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local database and test artifacts
+*.db
+*.db-journal
+/test-results/
+/playwright-report/

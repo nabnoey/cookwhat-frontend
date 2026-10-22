@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String             @id @default(cuid())
+  name         String
+  email        String             @unique
+  passwordHash String
+  createdAt    DateTime           @default(now())
+  recipes      Recipe[]
+  mealPlans    MealPlan[]
+  groceryItems GroceryItem[]
+  inventory    InventoryItem[]
+  equipment    KitchenEquipment[]
+  preferences  UserPreference?
+  allergies    UserAllergy[]
+  diets        UserDietaryPreference[]
+  dislikes     UserDislike[]
+  favorites    Favorite[]
+}
+
+model Product {
+  id          String          @id @default(cuid())
+  barcode     String          @unique
+  name        String
+  brand       String          @default("")
+  imageUrl    String          @default("")
+  category    String          @default("Pantry")
+  packageSize String          @default("")
+  nutrition   String?
+  createdAt   DateTime        @default(now())
+  inventory   InventoryItem[]
+}
+
+model IngredientCategory {
+  id        String          @id @default(cuid())
+  name      String          @unique
+  slug      String          @unique
+  items     InventoryItem[]
+  createdAt DateTime        @default(now())
+}
+
+model InventoryItem {
+  id                String    @id @default(cuid())
+  userId            String
+  productId         String?
+  name              String
+  category          String    @default("Other")
+  categoryId        String?
+  brand             String?
+  barcode           String?
+  packageSize       String?
+  ownedQuantity     Float?
+  remainingQuantity Float?
+  unit              String    @default("pieces")
+  expiresOn         DateTime?
+  note              String?
+  addedAt           DateTime  @default(now())
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product           Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  ingredientCategory IngredientCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([userId, category])
+  @@index([userId, expiresOn])
+}
+
+model KitchenEquipment {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}
+
+model UserPreference {
+  id                String @id @default(cuid())
+  userId            String @unique
+  maxCookingMinutes Int?
+  skillLevel        String @default("Any")
+  servings          Int    @default(2)
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserDietaryPreference {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}
+
+model UserAllergy {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}
+
+model UserDislike {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+}
+
+model Recipe {
+  id                String              @id @default(cuid())
+  userId            String?
+  title             String
+  description       String              @default("")
+  category          String              @default("Dinner")
+  cookingMinutes    Int                 @default(30)
+  servings          Int                 @default(2)
+  calories          Int                 @default(0)
+  imageUrl          String              @default("")
+  ingredients       String              @default("[]")
+  dietaryTags       String              @default("[]")
+  equipment         String              @default("[]")
+  instructionsText  String              @default("[]")
+  difficulty        String              @default("Easy")
+  createdAt         DateTime            @default(now())
+  user              User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plannedMeals      PlannedMeal[]
+  recipeIngredients RecipeIngredient[]
+  instructions      RecipeInstruction[]
+  favorites         Favorite[]
+}
+
+model RecipeIngredient {
+  id       String  @id @default(cuid())
+  recipeId String
+  name     String
+  amount   Float
+  unit     String
+  optional Boolean @default(false)
+  recipe   Recipe  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+}
+
+model RecipeInstruction {
+  id       String @id @default(cuid())
+  recipeId String
+  step     Int
+  text     String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, step])
+}
+
+model Favorite {
+  id       String @id @default(cuid())
+  userId   String
+  recipeId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+}
+
+model MealPlan {
+  id        String        @id @default(cuid())
+  userId    String
+  weekStart DateTime
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meals     PlannedMeal[]
+
+  @@unique([userId, weekStart])
+}
+
+model PlannedMeal {
+  id       String   @id @default(cuid())
+  planId   String
+  recipeId String
+  date     DateTime
+  slot     String
+  plan     MealPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, date, slot])
+}
+
+model GroceryItem {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  quantity  String   @default("")
+  unit      String   @default("")
+  checked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, checked])
+}
