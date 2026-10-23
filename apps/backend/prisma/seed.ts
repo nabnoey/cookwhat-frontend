@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { starterRecipes } from "../src/lib/recipes";
+import { starterRecipes } from "@cookwhat/shared";
 
 const prisma = new PrismaClient();
 

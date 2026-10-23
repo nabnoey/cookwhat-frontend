@@ -1,6 +1,18 @@
 # CookWhat
 
-CookWhat is a Next.js 14 meal-planning application with a TypeScript/Express REST API, Prisma, and PostgreSQL. NextAuth credentials remain the sign-in system. The browser receives only a short-lived API token; database credentials and the token-signing secret stay on the server.
+CookWhat is an npm-workspaces monorepo containing a Next.js 14 web app, a TypeScript/Express REST API, shared recipe-domain logic, Prisma, and PostgreSQL. NextAuth credentials remain the sign-in system. The browser receives only a short-lived API token; database credentials and the token-signing secret stay on the server.
+
+## Project structure
+
+```text
+apps/
+  backend/       Express API, Prisma schema/migrations, and seed script
+  frontend/      Next.js app, UI, and NextAuth/BFF routes
+packages/
+  shared/        Recipe and kitchen domain types and pure functions
+```
+
+Install dependencies from the repository root. Root npm scripts delegate to the relevant workspace; use `npm run api:dev` for the backend and `npm run dev` for the frontend. The shared package is consumed by both apps and contains no database or UI infrastructure.
 
 The PostgreSQL service is not deployed or connected until you configure a Supabase project and the environment variables below. Existing local SQLite data is not copied automatically.
 
@@ -10,7 +22,7 @@ The PostgreSQL service is not deployed or connected until you configure a Supaba
 2. In **Project Settings → Database**, copy the connection details:
    - `DATABASE_URL`: use the pooler connection string in transaction mode (port `6543`), with `pgbouncer=true&connection_limit=1`.
    - `DIRECT_URL`: use the direct database connection (port `5432`) for Prisma migrations. If your network does not support IPv6, use Supabase's session pooler connection instead.
-3. Copy `.env.example` to `.env` and replace the placeholders. Do not commit `.env`, send database passwords in chat, or use a privileged database key in browser variables.
+3. Copy `.env.example` to `apps/backend/.env` and `apps/frontend/.env.local`, then replace the placeholders in both files. Do not commit environment files, send database passwords in chat, or use a privileged database key in browser variables.
 4. Set `NEXTAUTH_SECRET` and `API_AUTH_SECRET` to separate strong random values. Use the same `API_AUTH_SECRET` for the web app and API service.
 5. Set `NEXT_PUBLIC_API_URL` to the API's origin and `CORS_ORIGIN` to the exact web-app origin. Comma-separated origins are supported.
 6. Generate the Prisma client and apply migrations:
@@ -29,8 +41,9 @@ The seed script upserts catalog categories and inserts starter recipes only when
 
 ```powershell
 npm install
-Copy-Item .env.example .env
-# Edit .env with the Supabase connection strings and secrets.
+Copy-Item .env.example apps\backend\.env
+Copy-Item .env.example apps\frontend\.env.local
+# Edit both files with the Supabase connection strings and secrets.
 npm run db:generate
 npm run db:migrate:deploy
 npm run db:seed
@@ -43,20 +56,31 @@ npm run dev
 npm run api:dev
 ```
 
-The web app runs at `http://localhost:3000`; the API defaults to `http://localhost:4000`. For production, build and run the Next.js app and Express API as separate services. `npm run api:build` performs TypeScript checking; `npm run api:start` starts the API entry point.
+The web app runs at `http://localhost:3000`; the API defaults to `http://localhost:4000`. For production, build and run the Next.js app and Express API as separate services. `npm run api:build` performs backend TypeScript checking; `npm run api:start` starts the API entry point.
+
+### Vercel frontend deployment
+
+Connect the repository to Vercel and configure the project as a monorepo:
+
+- Set **Root Directory** to `apps/frontend`.
+- Keep **Include files outside the root directory in the Build Step** enabled so the app can use `packages/shared` and the backend Prisma schema.
+- Use the detected Next.js framework and the default install/build commands. The frontend build script generates Prisma Client from `apps/backend/prisma/schema.prisma` before running `next build`.
+- Add the frontend environment variables from the table below in Vercel Project Settings. Set `NEXTAUTH_URL` to the production frontend URL and `NEXT_PUBLIC_API_URL` to the deployed Render API origin.
+
+The Render API root path `/` is not a web page; check API availability at `/api/health`.
 
 ## Environment variables
 
 | Variable | Used by | Description |
 | --- | --- | --- |
-| `DATABASE_URL` | Web and API | PostgreSQL pooler URL for normal queries. |
-| `DIRECT_URL` | Prisma CLI | Direct/session PostgreSQL URL used for migrations. |
-| `NEXTAUTH_SECRET` | Web | NextAuth session signing secret. |
-| `NEXTAUTH_URL` | Web | Public origin of the Next.js application. |
-| `API_AUTH_SECRET` | Web and API | Shared secret for 5-minute, audience/issuer-scoped API tokens. Keep server-side. |
+| `DATABASE_URL` | Backend and NextAuth routes | PostgreSQL pooler URL for normal queries. |
+| `DIRECT_URL` | Backend Prisma CLI | Direct/session PostgreSQL URL used for migrations. |
+| `NEXTAUTH_SECRET` | Frontend | NextAuth session signing secret. |
+| `NEXTAUTH_URL` | Frontend | Public origin of the Next.js application. |
+| `API_AUTH_SECRET` | Frontend and backend | Shared secret for 5-minute, audience/issuer-scoped API tokens. Keep server-side. |
 | `NEXT_PUBLIC_API_URL` | Browser | Public origin of the Express API; contains no credentials. |
-| `CORS_ORIGIN` | API | Allowed web origin(s), comma-separated. |
-| `PORT` | API host | Express listen port; defaults to `4000`. |
+| `CORS_ORIGIN` | Backend | Allowed web origin(s), comma-separated. |
+| `PORT` | Backend | Express listen port; defaults to `4000`. |
 
 ## API
 
@@ -110,7 +134,7 @@ Camera scanning requires HTTPS (or localhost) and camera permission. Manual barc
 - Deploy the Next.js web app and Express API separately; set `NEXT_PUBLIC_API_URL` to the deployed API origin and allow the web origin in `CORS_ORIGIN`.
 - Configure the same `API_AUTH_SECRET`, plus `DATABASE_URL` and `DIRECT_URL`, only in server-side deployment settings. Keep `NEXTAUTH_SECRET` private as well.
 - Use HTTPS, restrict CORS to known origins, and configure database network access/pooling in Supabase and the hosting dashboard.
-- Prisma access is server-side and scoped through Express authentication. Supabase Row Level Security policies are not configured because the application does not use the Supabase Data API directly. Do not expose database access from the browser.
+- Prisma access remains server-side. The Express API uses bearer-token authentication; Next.js auth and its existing app routes run server-side within the frontend workspace. Supabase Row Level Security policies are not configured because the application does not use the Supabase Data API directly. Do not expose database access from the browser.
 - SQLite data from an earlier local setup needs a separately reviewed export/import process; applying a PostgreSQL migration does not transfer that data.
 - Database/API migration and frontend wiring must be verified against a configured PostgreSQL project before claiming live persistence. Camera hardware, deployed CORS, and cross-user isolation should also be tested in the target environment.
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import Image from "next/image";
-import { InventoryItem, inventoryCategories, inventoryUnits } from "@/lib/kitchen";
+import { InventoryItem, inventoryCategories, inventoryUnits } from "@cookwhat/shared";
 
 type ProductLookup = {
   name: string;

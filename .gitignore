@@ -7,14 +7,14 @@
 .yarn/install-state.gz
 
 # testing
-/coverage
+coverage/
 
 # next.js
-/.next/
-/out/
+**/.next/
+**/out/
 
 # production
-/build
+**/build/
 
 # misc
 .DS_Store
@@ -41,5 +41,5 @@ next-env.d.ts
 # local database and test artifacts
 *.db
 *.db-journal
-/test-results/
-/playwright-report/
+**/test-results/
+**/playwright-report/

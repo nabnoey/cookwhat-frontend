@@ -2,37 +2,25 @@
   "name": "cookwhat",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend",
+    "packages/shared"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "npm run dev --workspace @cookwhat/frontend",
+    "build": "npm run build --workspace @cookwhat/frontend",
+    "start": "npm run start --workspace @cookwhat/frontend",
+    "lint": "npm run lint --workspace @cookwhat/frontend",
     "test": "jest --runInBand",
-    "test:e2e": "playwright test",
-    "db:generate": "prisma generate",
-    "db:migrate:dev": "prisma migrate dev",
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:seed": "prisma db seed",
-    "api:dev": "tsx watch server/index.ts",
-    "api:build": "tsc --noEmit",
-    "api:start": "tsx server/index.ts"
-  },
-  "dependencies": {
-    "@hello-pangea/dnd": "^18.0.1",
-    "@prisma/client": "^5.22.0",
-    "@zxing/browser": "^0.1.5",
-    "@zxing/library": "^0.21.3",
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.6",
-    "date-fns": "^4.4.0",
-    "express": "^5.3.0",
-    "jsonwebtoken": "^9.0.3",
-    "next": "14.2.35",
-    "next-auth": "^4.24.15",
-    "prisma": "^5.22.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "zod": "^4.6.7"
+    "test:e2e": "playwright test --config apps/frontend/playwright.config.ts",
+    "db:generate": "npm run db:generate --workspace @cookwhat/backend",
+    "db:migrate:dev": "npm run db:migrate:dev --workspace @cookwhat/backend",
+    "db:migrate:deploy": "npm run db:migrate:deploy --workspace @cookwhat/backend",
+    "db:seed": "npm run db:seed --workspace @cookwhat/backend",
+    "api:dev": "npm run dev --workspace @cookwhat/backend",
+    "api:build": "npm run build --workspace @cookwhat/backend",
+    "api:start": "npm run start --workspace @cookwhat/backend"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
@@ -53,10 +41,6 @@
     "playwright": "^1.64.1",
     "supertest": "^7.3.1",
     "ts-jest": "^29.4.15",
-    "tsx": "^4.23.15",
     "typescript": "^5"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }

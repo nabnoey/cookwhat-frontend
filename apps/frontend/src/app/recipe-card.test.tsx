@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { RecipeCard } from "./recipe-card";
-import type { Recipe } from "@/lib/recipes";
+import type { Recipe } from "@cookwhat/shared";
 
 const recipe: Recipe = {
   id: "weekday-pasta",

@@ -6,8 +6,8 @@ import {
   type InventoryItem,
   type RecipeMatch,
   type UserPreferences,
-} from "@/lib/kitchen";
-import type { MatchableRecipe } from "@/lib/kitchen";
+} from "@cookwhat/shared";
+import type { MatchableRecipe } from "@cookwhat/shared";
 
 type Props = {
   recipes: MatchableRecipe[];

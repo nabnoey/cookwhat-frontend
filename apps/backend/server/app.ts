@@ -3,7 +3,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { Prisma, PrismaClient } from "@prisma/client";
-import { recommendRecipes, type InventoryItem, type MatchableRecipe, type UserPreferences } from "../src/lib/kitchen";
+import { recommendRecipes, type InventoryItem, type MatchableRecipe, type UserPreferences } from "@cookwhat/shared";
 
 export const prisma = new PrismaClient();
 const barcodePattern = /^(?:\d{8}|\d{12}|\d{13}|\d{14})$/;

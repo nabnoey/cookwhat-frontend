@@ -1,6 +1,6 @@
 "use client";
 
-import type { Recipe } from "@/lib/recipes";
+import type { Recipe } from "@cookwhat/shared";
 
 export function RecipeCard({ recipe, onAdd }: { recipe: Recipe; onAdd: (recipe: Recipe) => void }) {
   return (

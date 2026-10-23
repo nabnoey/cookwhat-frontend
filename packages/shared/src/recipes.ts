@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import type { MatchableRecipe } from "@/lib/kitchen";
+import type { MatchableRecipe } from "./kitchen";
 
 export type Recipe = {
   id: string;

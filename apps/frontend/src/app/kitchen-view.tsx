@@ -7,7 +7,7 @@ import {
   inventoryUnits,
   isExpiringSoon,
   type InventoryItem,
-} from "@/lib/kitchen";
+} from "@cookwhat/shared";
 
 type Props = {
   inventory: InventoryItem[];

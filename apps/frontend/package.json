@@ -1,0 +1,29 @@
+{
+  "name": "@cookwhat/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate --schema ../backend/prisma/schema.prisma && next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@next/env": "14.2.35",
+    "@cookwhat/shared": "0.1.0",
+    "@hello-pangea/dnd": "^18.0.1",
+    "@prisma/client": "^5.22.0",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
+    "bcryptjs": "^3.0.3",
+    "date-fns": "^4.4.0",
+    "jsonwebtoken": "^9.0.3",
+    "next": "14.2.35",
+    "next-auth": "^4.24.15",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}

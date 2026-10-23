@@ -10,7 +10,7 @@ import {
   starterRecipes,
   type PlannedMeals,
   type Recipe,
-} from "@/lib/recipes";
+} from "@cookwhat/shared";
 import { RecipeCard } from "@/app/recipe-card";
 import { BarcodeScanner } from "@/app/barcode-scanner";
 import { KitchenView } from "@/app/kitchen-view";
@@ -22,7 +22,7 @@ import {
   type InventoryItem,
   type MatchableRecipe,
   type UserPreferences,
-} from "@/lib/kitchen";
+} from "@cookwhat/shared";
 
 type View = "Overview" | "My kitchen" | "Scan barcode" | "Meal planner" | "Recipes" | "Shopping list";
 type GroceryItem = { id: string; name: string; checked: boolean; quantity?: string };

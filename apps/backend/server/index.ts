@@ -1,4 +1,9 @@
+import dotenv from "dotenv";
+import { resolve } from "node:path";
 import app, { prisma } from "./app";
+
+dotenv.config({ path: resolve(process.cwd(), ".env") });
+dotenv.config({ path: resolve(process.cwd(), "../..", ".env") });
 
 const port = Number(process.env.PORT ?? 4000);
 const server = app.listen(port, () => console.info(`CookWhat API listening on port ${port}`));
