@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/env": "14.2.35",
     "@cookwhat/shared": "0.1.0",
     "@hello-pangea/dnd": "^18.0.1",
+    "@next/env": "14.2.35",
     "@prisma/client": "^5.22.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
@@ -24,6 +24,10 @@
     "react-dom": "^18"
   },
   "devDependencies": {
-    "prisma": "^5.22.0"
+    "@types/node": "^20.19.43",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "prisma": "^5.22.0",
+    "typescript": "^5.9.3"
   }
 }
