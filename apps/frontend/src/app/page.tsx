@@ -11,10 +11,10 @@ import {
   type PlannedMeals,
   type Recipe,
 } from "@cookwhat/shared";
-import { RecipeCard } from "@/app/recipe-card";
-import { BarcodeScanner } from "@/app/barcode-scanner";
-import { KitchenView } from "@/app/kitchen-view";
-import { RecommendationsView } from "@/app/recommendations-view";
+import { RecipeCard } from "./recipe-card";
+import { BarcodeScanner } from "./barcode-scanner";
+import { KitchenView } from "./kitchen-view";
+import { RecommendationsView } from "./recommendations-view";
 import {
   defaultPreferences,
   isMatchableRecipe,
